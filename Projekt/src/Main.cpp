@@ -4,6 +4,10 @@
 
 #include "Debug.h"
 #include "Window.h"
+#include "Shader.h"
+
+#include <fstream>
+#include <sstream>
 
 int main() 
 {
@@ -29,6 +33,43 @@ int main()
 	}
 	// ------------------------------------------------------
 
+	Shader shader;
+	shader.AddShader("res/shader/Basic.vert", GL_VERTEX_SHADER);
+	shader.AddShader("res/shader/Basic.frag", GL_FRAGMENT_SHADER);
+	shader.LinkShader();
+
+	float quad[6 * 4] = {
+		-0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f
+	};
+
+	unsigned int indices[6] = {
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	unsigned int vb;
+	glGenBuffers(1, &vb); // delete vb later
+	glBindBuffer(GL_ARRAY_BUFFER, vb);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
+
+	unsigned int ib;
+	glGenBuffers(1, &ib);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, 
+		GL_STATIC_DRAW);
+
+	unsigned int va;
+	glGenVertexArrays(1, &va);
+	glBindVertexArray(va);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 6, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(float) * 6, 
+		(void*)(2 * sizeof(float)));
+
 	// Game loop
 	while (!glfwWindowShouldClose(window.m_Window))
 	{
@@ -36,6 +77,12 @@ int main()
 
 		glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		shader.Bind();
+		glBindVertexArray(va);
+		glBindBuffer(GL_ARRAY_BUFFER, vb);
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
 
 		glfwSwapBuffers(window.m_Window);
 	}

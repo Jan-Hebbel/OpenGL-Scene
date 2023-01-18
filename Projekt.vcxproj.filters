@@ -30,6 +30,9 @@
     <ClCompile Include="Projekt\src\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Projekt\src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Projekt\vendor\GLFW\glfw3.h">
@@ -894,6 +897,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Projekt\src\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Projekt\src\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

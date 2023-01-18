@@ -20,10 +20,11 @@ void GLAPIENTRY openglErrorCallback(
 {
     switch (severity)
     {
+        std::cout << "[OpenGL] ";
         case GL_DEBUG_SEVERITY_HIGH:
         {
             fprintf(stderr, 
-                "ERROR: type = 0x%x, severity: HIGH, message = %s\n", 
+                "ERROR: type = 0x%x\n\tseverity: HIGH\n\tmessage = %s\n", 
                 type, message);
             exit(-1);
             break;
@@ -31,14 +32,14 @@ void GLAPIENTRY openglErrorCallback(
         case GL_DEBUG_SEVERITY_MEDIUM:
         {
             fprintf(stderr, 
-                "WARNING: type = 0x%x, severity: MEDIUM, message = %s\n", 
+                "WARNING: type = 0x%x\n\tseverity: MEDIUM\n\tmessage = %s\n", 
                 type, message);
             break;
         }
         case GL_DEBUG_SEVERITY_LOW:
         {
             fprintf(stderr, 
-                "WARNING: type = 0x%x, severity: LOW, message = %s\n", 
+                "WARNING: type = 0x%x\n\tseverity: LOW\n\tmessage = %s\n", 
                 type, message);
             break;
         }
