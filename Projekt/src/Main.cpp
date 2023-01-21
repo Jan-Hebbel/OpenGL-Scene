@@ -1,23 +1,55 @@
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <format>
 
 #include "Debug.h"
-#include "Window.h"
 #include "Shader.h"
 
 #include <fstream>
 #include <sstream>
 
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
+	int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
 int main() 
 {
-	Window window;
-	window.SetWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	window.SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	window.SetWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//window.EnableVSync(); // "turn on vsync"
-	window.CreateWindow(600, 600, "Projekt", false);
+	// set up a window and create opengl context ------------
+	if (!glfwInit())
+	{
+		std::cout << "Failed to init GLFW" << '\n';
+		exit(-1);
+	}
 
+#ifdef _DEBUG
+	glfwSetErrorCallback(glfwErrorCallback);
+#endif
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//glfwSwapInterval(1);
+	// in the monitor parameter use glfwGetPrimaryMonitor() for fullscreen
+	GLFWwindow* window = 
+		glfwCreateWindow(600, 600, "Projekt", nullptr, nullptr);
+	if (!window)
+	{
+		std::cout << std::format("Window creation failed") << '\n';
+		exit(-1);
+	}
+	glfwMakeContextCurrent(window);
+	// ------------------------------------------------------
+	
+	// glfw callback functions ------------------------------
+	glfwSetKeyCallback(window, KeyCallback);
+	// ------------------------------------------------------
+
+	// load opengl functions
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	// debugging --------------------------------------------
@@ -51,14 +83,14 @@ int main()
 	};
 
 	unsigned int vb;
-	glGenBuffers(1, &vb); // delete vb later
+	glGenBuffers(1, &vb);
 	glBindBuffer(GL_ARRAY_BUFFER, vb);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 
 	unsigned int ib;
 	glGenBuffers(1, &ib);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
 		GL_STATIC_DRAW);
 
 	unsigned int va;
@@ -70,20 +102,23 @@ int main()
 	glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(float) * 6, 
 		(void*)(2 * sizeof(float)));
 
-	// Game loop
-	while (!glfwWindowShouldClose(window.m_Window))
-	{
-		glfwPollEvents();
+	glBindVertexArray(va);
+	glBindBuffer(GL_ARRAY_BUFFER, vb);
 
+	// Game loop
+	while (!glfwWindowShouldClose(window))
+	{
 		glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.Bind();
-		glBindVertexArray(va);
-		glBindBuffer(GL_ARRAY_BUFFER, vb);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
 
-		glfwSwapBuffers(window.m_Window);
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }

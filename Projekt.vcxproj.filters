@@ -24,13 +24,16 @@
     <ClCompile Include="Projekt\vendor\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Projekt\src\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Projekt\src\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Projekt\src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Projekt\src\Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Projekt\src\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -893,13 +896,19 @@
     <ClInclude Include="Projekt\vendor\glad\glad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Projekt\src\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Projekt\src\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Projekt\src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Projekt\src\Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Projekt\src\VertexArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Projekt\src\VertexBufferLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
