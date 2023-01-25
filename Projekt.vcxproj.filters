@@ -30,10 +30,7 @@
     <ClCompile Include="Projekt\src\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Projekt\src\Buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Projekt\src\VertexArray.cpp">
+    <ClCompile Include="Projekt\vendor\stb\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -902,13 +899,7 @@
     <ClInclude Include="Projekt\src\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Projekt\src\Buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Projekt\src\VertexArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Projekt\src\VertexBufferLayout.h">
+    <ClInclude Include="Projekt\vendor\stb\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,16 +1,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-#include <format>
+#include <stb/stb_image.h>
 
 #include "Debug.h"
 #include "Shader.h"
 
-#include <fstream>
-#include <sstream>
+#include <iostream>
+#include <format>
 
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -28,6 +27,7 @@ int main()
 
 #ifdef _DEBUG
 	glfwSetErrorCallback(glfwErrorCallback);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 #endif
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -40,17 +40,24 @@ int main()
 	if (!window)
 	{
 		std::cout << std::format("Window creation failed") << '\n';
+		glfwTerminate();
 		exit(-1);
 	}
 	glfwMakeContextCurrent(window);
 	// ------------------------------------------------------
 	
 	// glfw callback functions ------------------------------
-	glfwSetKeyCallback(window, KeyCallback);
+	glfwSetKeyCallback(window, keyCallback);
 	// ------------------------------------------------------
 
 	// load opengl functions
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Error initializing glad" << '\n';
+		glfwDestroyWindow(window);
+		glfwTerminate();
+		exit(-1);
+	}
 
 	// debugging --------------------------------------------
 	int flags;
@@ -65,16 +72,46 @@ int main()
 	}
 	// ------------------------------------------------------
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	Shader shader;
 	shader.AddShader("res/shader/Basic.vert", GL_VERTEX_SHADER);
 	shader.AddShader("res/shader/Basic.frag", GL_FRAGMENT_SHADER);
 	shader.LinkShader();
 
-	float quad[6 * 4] = {
-		-0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f
+	float quad[4 * 4] = {
+		-0.5f, -0.5f,	   0.0f,       0.0f,	// bottom left
+		 0.5f, -0.5f,	0.0625f,	   0.0f,	// bottom right
+		 0.5f,  0.5f,	0.0625f,	0.0625f,	// top right
+		-0.5f,  0.5f,	   0.0f,	0.0625f		// top left
+	};
+
+	float block[] = {
+		-0.5f, -0.5f, -0.5f,	0.0f,    0.0f,		// bottom
+		 0.5f, -0.5f, -0.5f,	0.0625f, 0.0f,		
+		 0.5f, -0.5f,  0.5f,	0.0625f, 0.0625f,	
+		-0.5f, -0.5f,  0.5f,	0.0f,    0.0625f,	
+		-0.5f,  0.5f, -0.5f,	0.0f,    0.0f,		// top
+		 0.5f,  0.5f, -0.5f,	0.0625f, 0.0f,		
+		 0.5f,  0.5f,  0.5f,	0.0625f, 0.0625f,	
+		-0.5f,  0.5f,  0.5f,	0.0f,	 0.0625f	
+		-0.5f, -0.5f, -0.5f,    0.0f,    0.0f,		// front
+		 0.5f, -0.5f, -0.5f,	0.0625f, 0.0f,
+		 0.5f,  0.5f, -0.5f,	0.0625f, 0.0625f,
+		-0.5f,  0.5f, -0.5f,	0.0f,    0.0625f,
+		-0.5f, -0.5f,  0.5f,    0.0f,    0.0f,		// left
+		-0.5f, -0.5f, -0.5f,	0.0625f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	0.0625f, 0.0625f,
+		-0.5f,  0.5f,  0.5f,	0.0f,    0.0625f,
+		 0.5f, -0.5f, -0.5f,	0.0f,    0.0f,		// right
+		 0.5f, -0.5f,  0.5f,	0.0625f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	0.0625f, 0.0625f,
+		 0.5f,  0.5f, -0.5f,	0.0f,    0.0625f,
+		 0.5f, -0.5f,  0.5f,	0.0f,    0.0f,		// back
+		-0.5f, -0.5f,  0.5f,	0.0625f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	0.0625f, 0.0625f,
+		 0.5f,  0.5f,  0.5f,	0.0f,    0.0625f,
 	};
 
 	unsigned int indices[6] = {
@@ -82,28 +119,92 @@ int main()
 		0, 2, 3
 	};
 
-	unsigned int vb;
+	unsigned int blockIndices[] = {
+		0,  1,  2,	// bottom 
+		0,  2,  3, 
+		4,  5,  6,	// top 
+		4,  6,  7, 
+		8,  9,  10,	// front
+		8,  10, 11, 
+		12, 13, 14,	// left
+		12, 14, 15,
+		16, 17, 18,	// right
+		16, 18, 19,
+		20, 21, 22,	// back
+		20, 22, 23,
+	};
+
+	unsigned int vb, ib, va;
+	glGenVertexArrays(1, &va);
+	glBindVertexArray(va);
+
 	glGenBuffers(1, &vb);
 	glBindBuffer(GL_ARRAY_BUFFER, vb);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 
-	unsigned int ib;
+	//glGenBuffers(1, &vb);
+	//glBindBuffer(GL_ARRAY_BUFFER, vb);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(block), block, GL_STATIC_DRAW);
+
 	glGenBuffers(1, &ib);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
 		GL_STATIC_DRAW);
 
-	unsigned int va;
-	glGenVertexArrays(1, &va);
-	glBindVertexArray(va);
+	//glGenBuffers(1, &ib);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(blockIndices), blockIndices,
+	//	GL_STATIC_DRAW);
+
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 6, (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 4, (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(float) * 6, 
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 4, 
 		(void*)(2 * sizeof(float)));
 
-	glBindVertexArray(va);
-	glBindBuffer(GL_ARRAY_BUFFER, vb);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 5, (void*)0);
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 5, 
+	//	(void*)(3 * sizeof(float)));
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	stbi_set_flip_vertically_on_load(true);
+
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("res/textures/texture_atlas.png", 
+		&width, &height, &nrChannels, 0);
+
+	if (data)
+	{
+		// set format to GL_RGBA if the image is a png
+		// set format to GL_RGB if the image is a jpg
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, 
+			GL_UNSIGNED_BYTE, data);
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+		//	GL_UNSIGNED_BYTE, nullptr);
+		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 16, 16, GL_RGBA,
+		//	GL_UNSIGNED_BYTE, data);
+		// glTexSubImage2D replaces a part of the predefined texture with a new
+		// one, so it's not the right function to do sprite sheets with
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << '\n';
+	}
+	stbi_image_free(data);
+
+	//shader.Bind();
+	//shader.SetInt(0, 0);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -111,9 +212,13 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glBindTexture(GL_TEXTURE_2D, texture);
+
 		shader.Bind();
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
+		// last parameter can be 0 if the element array buffer is bound to 
+		// the vertex array before the draw call
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

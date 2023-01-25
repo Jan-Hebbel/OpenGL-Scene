@@ -150,17 +150,13 @@
     <ClCompile Include="Projekt\src\Debug.cpp" />
     <ClCompile Include="Projekt\src\Main.cpp" />
     <ClCompile Include="Projekt\src\Shader.cpp" />
-    <ClCompile Include="Projekt\src\Buffer.cpp" />
-    <ClCompile Include="Projekt\src\VertexArray.cpp" />
     <ClCompile Include="Projekt\vendor\glad.c" />
     <ClCompile Include="Projekt\vendor\glm\detail\glm.cpp" />
+    <ClCompile Include="Projekt\vendor\stb\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Projekt\src\Debug.h" />
     <ClInclude Include="Projekt\src\Shader.h" />
-    <ClInclude Include="Projekt\src\Buffer.h" />
-    <ClInclude Include="Projekt\src\VertexArray.h" />
-    <ClInclude Include="Projekt\src\VertexBufferLayout.h" />
     <ClInclude Include="Projekt\vendor\glad\glad.h" />
     <ClInclude Include="Projekt\vendor\GLFW\glfw3.h" />
     <ClInclude Include="Projekt\vendor\GLFW\glfw3native.h" />
@@ -447,6 +443,7 @@
     <ClInclude Include="Projekt\vendor\glm\vec4.hpp" />
     <ClInclude Include="Projekt\vendor\glm\vector_relational.hpp" />
     <ClInclude Include="Projekt\vendor\KHR\khrplatform.h" />
+    <ClInclude Include="Projekt\vendor\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Projekt\vendor\glm\detail\func_common.inl" />

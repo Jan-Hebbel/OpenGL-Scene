@@ -45,6 +45,9 @@ void GLAPIENTRY openglErrorCallback(
         }
         case GL_DEBUG_SEVERITY_NOTIFICATION:
         {
+            fprintf(stderr,
+                "NOTIFICATION: type = 0x%x\n\tseverity: NOTIFICATION\n\t"
+                "message = % s\n", type, message);
             break;
         }
     }
