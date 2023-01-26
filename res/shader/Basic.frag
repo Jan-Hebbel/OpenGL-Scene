@@ -4,7 +4,7 @@ in vec2 texCoord;
 
 out vec4 FragColor;
 
-layout(location = 0) uniform sampler2D textureAtlas;
+layout(location = 1) uniform sampler2D textureAtlas;
 
 void main()
 {

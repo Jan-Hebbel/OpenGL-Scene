@@ -3,6 +3,9 @@
 
 #include <stb/stb_image.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Debug.h"
 #include "Shader.h"
 
@@ -16,7 +19,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action,
 		glfwSetWindowShouldClose(window, true);
 }
 
-int main() 
+int main()
 {
 	// set up a window and create opengl context ------------
 	if (!glfwInit())
@@ -35,7 +38,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwSwapInterval(1);
 	// in the monitor parameter use glfwGetPrimaryMonitor() for fullscreen
-	GLFWwindow* window = 
+	GLFWwindow* window =
 		glfwCreateWindow(600, 600, "Projekt", nullptr, nullptr);
 	if (!window)
 	{
@@ -45,7 +48,7 @@ int main()
 	}
 	glfwMakeContextCurrent(window);
 	// ------------------------------------------------------
-	
+
 	// glfw callback functions ------------------------------
 	glfwSetKeyCallback(window, keyCallback);
 	// ------------------------------------------------------
@@ -67,11 +70,12 @@ int main()
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(openglErrorCallback, nullptr);
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
 			nullptr, GL_TRUE);
 	}
 	// ------------------------------------------------------
 
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -88,30 +92,35 @@ int main()
 	};
 
 	float block[] = {
-		-0.5f, -0.5f, -0.5f,	0.0f,    0.0f,		// bottom
-		 0.5f, -0.5f, -0.5f,	0.0625f, 0.0f,		
-		 0.5f, -0.5f,  0.5f,	0.0625f, 0.0625f,	
-		-0.5f, -0.5f,  0.5f,	0.0f,    0.0625f,	
-		-0.5f,  0.5f, -0.5f,	0.0f,    0.0f,		// top
-		 0.5f,  0.5f, -0.5f,	0.0625f, 0.0f,		
-		 0.5f,  0.5f,  0.5f,	0.0625f, 0.0625f,	
-		-0.5f,  0.5f,  0.5f,	0.0f,	 0.0625f	
-		-0.5f, -0.5f, -0.5f,    0.0f,    0.0f,		// front
-		 0.5f, -0.5f, -0.5f,	0.0625f, 0.0f,
-		 0.5f,  0.5f, -0.5f,	0.0625f, 0.0625f,
-		-0.5f,  0.5f, -0.5f,	0.0f,    0.0625f,
-		-0.5f, -0.5f,  0.5f,    0.0f,    0.0f,		// left
-		-0.5f, -0.5f, -0.5f,	0.0625f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	0.0625f, 0.0625f,
-		-0.5f,  0.5f,  0.5f,	0.0f,    0.0625f,
-		 0.5f, -0.5f, -0.5f,	0.0f,    0.0f,		// right
-		 0.5f, -0.5f,  0.5f,	0.0625f, 0.0f,
-		 0.5f,  0.5f,  0.5f,	0.0625f, 0.0625f,
-		 0.5f,  0.5f, -0.5f,	0.0f,    0.0625f,
-		 0.5f, -0.5f,  0.5f,	0.0f,    0.0f,		// back
-		-0.5f, -0.5f,  0.5f,	0.0625f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	0.0625f, 0.0625f,
-		 0.5f,  0.5f,  0.5f,	0.0f,    0.0625f,
+	   -0.5f, -0.5f,  0.5f,		0.0f,    0.0f,		// bottom
+		0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,
+		0.5f, -0.5f, -0.5f,		0.0625f, 0.0625f,
+	   -0.5f, -0.5f, -0.5f,		0.0f,    0.0625f,
+
+	   -0.5f,  0.5f,  0.5f,		0.0f,    0.0f,		// top
+		0.5f,  0.5f,  0.5f,		0.0625f, 0.0f,
+		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,
+	   -0.5f,  0.5f, -0.5f,		0.0f,	 0.0625f,
+
+	   -0.5f, -0.5f,  0.5f,		0.0f,    0.0f,		// front
+		0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,
+		0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,
+	   -0.5f,  0.5f,  0.5f,		0.0f,    0.0625f,
+
+	   -0.5f, -0.5f, -0.5f,		0.0f,    0.0f,		// left
+	   -0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,
+	   -0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,
+	   -0.5f,  0.5f, -0.5f,		0.0f,    0.0625f,
+
+		0.5f, -0.5f,  0.5f,		0.0f,    0.0f,		// right
+		0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,
+		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,
+		0.5f,  0.5f,  0.5f,		0.0f,    0.0625f,
+
+		0.5f, -0.5f, -0.5f,		0.0f,    0.0f,		// back
+	   -0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,
+	   -0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,
+		0.5f,  0.5f, -0.5f,		0.0f,    0.0625f
 	};
 
 	unsigned int indices[6] = {
@@ -138,35 +147,35 @@ int main()
 	glGenVertexArrays(1, &va);
 	glBindVertexArray(va);
 
-	glGenBuffers(1, &vb);
-	glBindBuffer(GL_ARRAY_BUFFER, vb);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
-
 	//glGenBuffers(1, &vb);
 	//glBindBuffer(GL_ARRAY_BUFFER, vb);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(block), block, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &ib);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-		GL_STATIC_DRAW);
+	glGenBuffers(1, &vb);
+	glBindBuffer(GL_ARRAY_BUFFER, vb);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(block), block, GL_STATIC_DRAW);
 
 	//glGenBuffers(1, &ib);
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(blockIndices), blockIndices,
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
 	//	GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 4, (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 4, 
-		(void*)(2 * sizeof(float)));
+	glGenBuffers(1, &ib);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(blockIndices), blockIndices,
+		GL_STATIC_DRAW);
 
 	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 5, (void*)0);
+	//glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 4, (void*)0);
 	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 5, 
-	//	(void*)(3 * sizeof(float)));
+	//glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 4, 
+	//	(void*)(2 * sizeof(float)));
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 5, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 5, 
+		(void*)(3 * sizeof(float)));
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -190,12 +199,6 @@ int main()
 		// set format to GL_RGB if the image is a jpg
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, 
 			GL_UNSIGNED_BYTE, data);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-		//	GL_UNSIGNED_BYTE, nullptr);
-		//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 16, 16, GL_RGBA,
-		//	GL_UNSIGNED_BYTE, data);
-		// glTexSubImage2D replaces a part of the predefined texture with a new
-		// one, so it's not the right function to do sprite sheets with
 	}
 	else
 	{
@@ -203,14 +206,26 @@ int main()
 	}
 	stbi_image_free(data);
 
-	//shader.Bind();
-	//shader.SetInt(0, 0);
+	// leave object in the middle
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	glm::mat4 projection = glm::mat4(1.0f);
+	projection = glm::perspective(glm::pi<float>() * 0.25f, 1.0f / 1.0f,
+		0.1f, 100.0f);
+
+	glm::mat4 mvp = projection * view * model;
+
+	shader.Bind();
+	// set sampler2D to GL_TEXTURE0, since current texture is on GL_TEXTURE0
+	shader.SetMat4(0, mvp);
+	shader.SetInt(1, 0);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
 		glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -218,7 +233,7 @@ int main()
 
 		// last parameter can be 0 if the element array buffer is bound to 
 		// the vertex array before the draw call
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 constexpr auto VERTEX_SHADER = 0;
 constexpr auto FRAGMENT_SHADER = 1;
 constexpr auto TESSELATION_CONTROL_SHADER = 2;
@@ -22,10 +24,11 @@ public:
 	void AddShader(const std::string& filePath, const int type);
 	void LinkShader();
 
-	void Bind();
-	void Unbind();
+	void Bind() const;
+	void Unbind() const;
 
-	void SetInt(unsigned int id, int value);
+	void SetInt(unsigned int id, int value) const;
+	void SetMat4(unsigned int id, const glm::mat4 &matrix) const;
 private:
 	std::string GetShaderSource(const std::string&) const;
 	unsigned int GetIndex(int type) const;

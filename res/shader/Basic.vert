@@ -5,8 +5,10 @@ layout(location = 1) in vec2 aTexCoord;
 
 out vec2 texCoord;
 
+layout(location = 0) uniform mat4 mvp;
+
 void main()
 {
 	texCoord = aTexCoord;
-	gl_Position = vec4(aPosition, 1.0);
+	gl_Position = mvp * vec4(aPosition, 1.0);
 }

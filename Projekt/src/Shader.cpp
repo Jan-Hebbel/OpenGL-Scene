@@ -45,7 +45,6 @@ void Shader::LinkShader()
 	glLinkProgram(mProgramID);
 	CheckCompileErrors(mProgramID, "PROGRAM");
 
-	// TODO: this solution to deleting shaders can and should be improved
 	glDeleteShader(mShaderIDs[VERTEX_SHADER]);
 	glDeleteShader(mShaderIDs[FRAGMENT_SHADER]);
 	for (int i = 2; i < MAX_AMOUNT_OF_SHADERS; ++i)
@@ -57,19 +56,24 @@ void Shader::LinkShader()
 	}
 }
 
-void Shader::Bind()
+void Shader::Bind() const
 {
 	glUseProgram(mProgramID);
 }
 
-void Shader::Unbind()
+void Shader::Unbind() const
 {
 	glUseProgram(0);
 }
 
-void Shader::SetInt(unsigned int id, int value)
+void Shader::SetInt(unsigned int id, int value) const
 {
 	glUniform1i(id, value);
+}
+
+void Shader::SetMat4(unsigned int id, const glm::mat4 &matrix) const
+{
+	glUniformMatrix4fv(id, 1, false, &matrix[0][0]);
 }
 
 std::string Shader::GetShaderSource(const std::string& filepath) const
