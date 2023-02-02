@@ -150,6 +150,7 @@
     <ClCompile Include="Projekt\src\Debug.cpp" />
     <ClCompile Include="Projekt\src\Main.cpp" />
     <ClCompile Include="Projekt\src\Shader.cpp" />
+    <ClCompile Include="Projekt\src\Window.cpp" />
     <ClCompile Include="Projekt\vendor\glad.c" />
     <ClCompile Include="Projekt\vendor\glm\detail\glm.cpp" />
     <ClCompile Include="Projekt\vendor\stb\stb_image.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Projekt\src\Debug.h" />
     <ClInclude Include="Projekt\src\Shader.h" />
+    <ClInclude Include="Projekt\src\Window.h" />
     <ClInclude Include="Projekt\vendor\glad\glad.h" />
     <ClInclude Include="Projekt\vendor\GLFW\glfw3.h" />
     <ClInclude Include="Projekt\vendor\GLFW\glfw3native.h" />

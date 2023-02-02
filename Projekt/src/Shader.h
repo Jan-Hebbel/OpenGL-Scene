@@ -21,6 +21,7 @@ public:
 	Shader();
 	~Shader();
 
+	void Create();
 	void AddShader(const std::string& filePath, const int type);
 	void LinkShader();
 

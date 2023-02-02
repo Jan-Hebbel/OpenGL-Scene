@@ -9,14 +9,18 @@
 #include <format>
 
 Shader::Shader()
-	: mProgramID(0), mShaderIDs{}
+	: mProgramID(0), mShaderIDs{} 
 {
-	mProgramID = glCreateProgram();
 }
 
 Shader::~Shader()
 {
 	glDeleteProgram(mProgramID);
+}
+
+void Shader::Create()
+{
+	mProgramID = glCreateProgram();
 }
 
 void Shader::AddShader(const std::string& filepath, const int type)
