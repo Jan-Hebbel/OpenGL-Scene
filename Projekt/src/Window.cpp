@@ -90,10 +90,10 @@ void Init()
 	shader.LinkShader();
 
 	float block[] = {
-	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		// bottom
-		0.5f, -0.5f,  0.5f,		0.1875f, 0.0f,
-		0.5f, -0.5f, -0.5f,		0.1875f, 0.0625f,
-	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0625f,
+	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		// bottom
+		0.5f, -0.5f, -0.5f,		0.1875f, 0.0f,
+		0.5f, -0.5f,  0.5f,		0.1875f, 0.0625f,
+	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0625f,
 
 	   -0.5f,  0.5f,  0.5f,		0.0f,    0.0f,		// top
 		0.5f,  0.5f,  0.5f,		0.0625f, 0.0f,
@@ -219,9 +219,17 @@ void Render()
 	shader.Bind();
 	shader.SetMat4(0, matrices.mvp);
 
-	// last parameter can be 0 if the element array buffer is bound to 
-	// the vertex array before the draw call
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	for (float i = 0.0f; i < 16.0f; ++i)
+	{
+		for (float j = 0.0f; j < 16.0f; ++j)
+		{
+			matrices.model = glm::mat4(1.0f);
+			matrices.model = glm::translate(matrices.model, glm::vec3(i, 0.0f, j));
+			matrices.mvp = matrices.projection * matrices.view * matrices.model;
+			shader.SetMat4(0, matrices.mvp);
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		}
+	}
 }
 
 void Destroy()
@@ -289,6 +297,7 @@ void Window::Create()
 	// ------------------------------------------------------
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
