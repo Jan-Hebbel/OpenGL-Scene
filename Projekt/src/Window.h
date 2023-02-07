@@ -6,13 +6,16 @@
 struct Window
 {
 	GLFWwindow* handle;
+	int width;
+	int height;
+	float aspectRatio;
 	float lastX;
 	float lastY;
 	bool firstMouse = true;
 	double deltaTime = 0.0f;
 	double lastFrame = 0.0f;
 
-	static void Create();
+	static void Create(int width, int height);
 	static void Loop();
 };
 

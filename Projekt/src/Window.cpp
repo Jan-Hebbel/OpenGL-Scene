@@ -193,7 +193,8 @@ void Init()
 	// leave object in the middle
 	matrices.model = glm::mat4(1.0f);
 	matrices.view = glm::lookAt(camera.position, camera.position + camera.front, camera.up);
-	matrices.projection = glm::perspective(glm::pi<float>() * 0.25f, 1.0f / 1.0f, 0.1f, 100.0f);
+	matrices.projection = 
+		glm::perspective(glm::pi<float>() * 0.25f, window.aspectRatio, 0.1f, 100.0f);
 
 	matrices.mvp = matrices.projection * matrices.view * matrices.model;
 
@@ -238,7 +239,7 @@ void Destroy()
 	glfwTerminate();
 }
 
-void Window::Create()
+void Window::Create(int width, int height)
 {
 	// set up a window and create opengl context ------------
 	if (!glfwInit())
@@ -258,7 +259,11 @@ void Window::Create()
 	//glfwSwapInterval(1);
 	// in the monitor parameter use glfwGetPrimaryMonitor() for fullscreen
 
-	window.handle = glfwCreateWindow(600, 600, "Projekt", nullptr, nullptr);
+	window.width = width;
+	window.height = height;
+	window.aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+
+	window.handle = glfwCreateWindow(window.width, window.height, "Projekt", nullptr, nullptr);
 	if (!window.handle)
 	{
 		std::cout << std::format("Window creation failed") << '\n';
@@ -283,6 +288,8 @@ void Window::Create()
 		glfwTerminate();
 		exit(-1);
 	}
+
+	glViewport(0, 0, window.width, window.height);
 
 	// debugging --------------------------------------------
 	int flags;

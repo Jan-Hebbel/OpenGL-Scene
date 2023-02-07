@@ -2,6 +2,6 @@
 
 int main()
 {
-	Window::Create();
+	Window::Create(1600, 900);
 	Window::Loop();
 }
