@@ -1320,5 +1320,7 @@
     </None>
     <None Include="res\shader\Basic.vert" />
     <None Include="res\shader\Basic.frag" />
+    <None Include="res\shader\Skybox.vert" />
+    <None Include="res\shader\Skybox.frag" />
   </ItemGroup>
 </Project>

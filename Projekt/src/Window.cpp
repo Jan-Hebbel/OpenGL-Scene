@@ -14,7 +14,12 @@
 Window window;
 Camera camera;
 Shader shader;
+Shader skyboxShader;
 Matrices matrices;
+unsigned int blockVA;
+unsigned int skyboxVA;
+unsigned int textureBlock;
+unsigned int textureSkybox;
 
 void keyCallback(GLFWwindow* pwindow, int key, int scancode, int action, int mods)
 {
@@ -83,7 +88,7 @@ void processInput()
 
 void Init()
 {
-	//Shader shader;
+	// basic shader
 	shader.Create();
 	shader.AddShader("res/shader/Basic.vert", GL_VERTEX_SHADER);
 	shader.AddShader("res/shader/Basic.frag", GL_FRAGMENT_SHADER);
@@ -136,9 +141,9 @@ void Init()
 		20, 22, 23,
 	};
 
-	unsigned int vb, ib, va;
-	glGenVertexArrays(1, &va);
-	glBindVertexArray(va);
+	unsigned int vb, ib;
+	glGenVertexArrays(1, &blockVA);
+	glBindVertexArray(blockVA);
 
 	glGenBuffers(1, &vb);
 	glBindBuffer(GL_ARRAY_BUFFER, vb);
@@ -154,10 +159,9 @@ void Init()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 5, (void*)(3 * sizeof(float)));
 
-	unsigned int texture;
-	glGenTextures(1, &texture);
+	glGenTextures(1, &textureBlock);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, textureBlock);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -181,13 +185,114 @@ void Init()
 		std::cout << "Failed to load texture" << '\n';
 	}
 	stbi_image_free(data);
+	stbi_set_flip_vertically_on_load(false);
+
+	// skybox shader
+	skyboxShader.Create();
+	skyboxShader.AddShader("res/shader/Skybox.vert", GL_VERTEX_SHADER);
+	skyboxShader.AddShader("res/shader/Skybox.frag", GL_FRAGMENT_SHADER);
+	skyboxShader.LinkShader();
+
+	// cube vbo, vao and data for skybox
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	unsigned int vb_skybox;
+	glGenVertexArrays(1, &skyboxVA);
+	glBindVertexArray(skyboxVA);
+
+	glGenBuffers(1, &vb_skybox);
+	glBindBuffer(GL_ARRAY_BUFFER, vb_skybox);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 3, (const void*)0);
+
+	// load cube map for skybox
+	glGenTextures(1, &textureSkybox);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureSkybox);
+
+	const std::string faces[] = {
+		"res/textures/skybox_right.png",
+		"res/textures/skybox_left.png",
+		"res/textures/skybox_top.png",
+		"res/textures/skybox_bottom.png",
+		"res/textures/skybox_front.png",
+		"res/textures/skybox_back.png"
+	};
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		unsigned char* data = 
+			stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGBA,
+				GL_UNSIGNED_BYTE, data);
+		}
+		else
+		{
+			std::cout << "Failed to load skybox texture " << i << '\n';
+		}
+		stbi_image_free(data);
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	camera.position = glm::vec3(0.0f, 0.0f, 3.0f);
 	camera.front = glm::vec3(0.0f, 0.0f, -1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	camera.right = glm::vec3(1.0f, 0.0f, 0.0f);
 	camera.worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	camera.movementSpeed = 2.5f;
+	camera.movementSpeed = 5.0f;
 	camera.mouseSens = 0.1f;
 
 	// leave object in the middle
@@ -199,9 +304,12 @@ void Init()
 	matrices.mvp = matrices.projection * matrices.view * matrices.model;
 
 	shader.Bind();
-	// set sampler2D to GL_TEXTURE0, since current texture is on GL_TEXTURE0                                              
 	shader.SetMat4(0, matrices.mvp);
 	shader.SetInt(1, 0);
+
+	skyboxShader.Bind();
+	skyboxShader.SetMat4(0, matrices.mvp);
+	skyboxShader.SetInt(1, 0);
 }
 
 void Update()
@@ -217,9 +325,12 @@ void Render()
 	matrices.view = glm::lookAt(camera.position, camera.position + camera.front, camera.up);
 	matrices.mvp = matrices.projection * matrices.view * matrices.model;
 
+	// draw 16 x 16 grass blocks
 	shader.Bind();
 	shader.SetMat4(0, matrices.mvp);
-
+	glBindVertexArray(blockVA);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureBlock);
 	for (float i = 0.0f; i < 16.0f; ++i)
 	{
 		for (float j = 0.0f; j < 16.0f; ++j)
@@ -231,6 +342,20 @@ void Render()
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		}
 	}
+	glBindVertexArray(0);
+
+	// draw skybox
+	glDepthFunc(GL_LEQUAL);
+	skyboxShader.Bind();
+	glm::mat4 view = glm::mat4(glm::mat3(matrices.view));
+	glm::mat4 mvp = matrices.projection * view;
+	skyboxShader.SetMat4(0, mvp);
+	glBindVertexArray(skyboxVA);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureSkybox);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+	glDepthFunc(GL_LESS);
 }
 
 void Destroy()
