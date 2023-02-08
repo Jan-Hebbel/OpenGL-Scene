@@ -80,6 +80,11 @@ void Shader::SetMat4(unsigned int id, const glm::mat4 &matrix) const
 	glUniformMatrix4fv(id, 1, false, &matrix[0][0]);
 }
 
+void Shader::SetVec3(unsigned int id, const glm::vec3 &vector) const
+{
+	glUniform3fv(id, 1, &vector[0]);
+}
+
 std::string Shader::GetShaderSource(const std::string& filepath) const
 {
 	std::ifstream stream(filepath);

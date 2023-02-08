@@ -95,35 +95,35 @@ void Init()
 	shader.LinkShader();
 
 	float block[] = {
-	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		// bottom
-		0.5f, -0.5f, -0.5f,		0.1875f, 0.0f,
-		0.5f, -0.5f,  0.5f,		0.1875f, 0.0625f,
-	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0625f,
+	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 0.0f, -1.0f,  0.0f,	// bottom
+		0.5f, -0.5f, -0.5f,		0.1875f, 0.0f,		 0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,		0.1875f, 0.0625f,	 0.0f, -1.0f,  0.0f,
+	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0625f,	 0.0f, -1.0f,  0.0f,
 
-	   -0.5f,  0.5f,  0.5f,		0.0f,    0.0f,		// top
-		0.5f,  0.5f,  0.5f,		0.0625f, 0.0f,
-		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,
-	   -0.5f,  0.5f, -0.5f,		0.0f,	 0.0625f,
+	   -0.5f,  0.5f,  0.5f,		0.0f,    0.0f,	 	 0.0f,  1.0f,  0.0f,	// top
+		0.5f,  0.5f,  0.5f,		0.0625f, 0.0f,		 0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	 0.0f,  1.0f,  0.0f,
+	   -0.5f,  0.5f, -0.5f,		0.0f,	 0.0625f,	 0.0f,  1.0f,  0.0f,
 
-	   -0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		// front
-		0.5f, -0.5f,  0.5f,		0.125f,  0.0f,
-		0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,
-	   -0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,
+	   -0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		 0.0f,  0.0f,  1.0f,	// front
+		0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		 0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,	 0.0f,  0.0f,  1.0f,
+	   -0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,	 0.0f,  0.0f,  1.0f,
 
-	   -0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		// left
-	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0f,
-	   -0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,
-	   -0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,
+	   -0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		-1.0f,  0.0f,  0.0f,	// left
+	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		-1.0f,  0.0f,  0.0f,
+	   -0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,	-1.0f,  0.0f,  0.0f,
+	   -0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	-1.0f,  0.0f,  0.0f,
 
-		0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		// right
-		0.5f, -0.5f, -0.5f,		0.125f,  0.0f,
-		0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,
-		0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,
+		0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		 1.0f,  0.0f,  0.0f,	// right
+		0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,	 1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,	 1.0f,  0.0f,  0.0f,
 
-		0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		// back
-	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,
-	   -0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,
-		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f
+		0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		 0.0f,  0.0f, -1.0f,	// back
+	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 0.0f,  0.0f, -1.0f,
+	   -0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,	 0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	 0.0f,  0.0f, -1.0f,
 	};
 
 	unsigned int blockIndices[] = {
@@ -155,10 +155,11 @@ void Init()
 		GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 5, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 8, (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 5, (void*)(3 * sizeof(float)));
-
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 8, (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, false, sizeof(float) * 8, (void*)(5 * sizeof(float)));
 	glGenTextures(1, &textureBlock);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
@@ -301,15 +302,21 @@ void Init()
 	matrices.projection = 
 		glm::perspective(glm::pi<float>() * 0.25f, window.aspectRatio, 0.1f, 100.0f);
 
-	matrices.mvp = matrices.projection * matrices.view * matrices.model;
-
 	shader.Bind();
-	shader.SetMat4(0, matrices.mvp);
-	shader.SetInt(1, 0);
+	shader.SetMat4(0, matrices.projection);
+	shader.SetMat4(1, matrices.view);
+	shader.SetMat4(2, matrices.model);
+	shader.SetInt(3, 0);
+
+	glm::vec3 lightPos = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	shader.SetVec3(4, lightPos);
+	shader.SetVec3(5, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	skyboxShader.Bind();
-	skyboxShader.SetMat4(0, matrices.mvp);
-	skyboxShader.SetInt(1, 0);
+	skyboxShader.SetMat4(0, matrices.projection);
+	skyboxShader.SetMat4(1, glm::mat4(glm::mat3(matrices.view)));
+	skyboxShader.SetInt(2, 0);
 }
 
 void Update()
@@ -323,11 +330,12 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	matrices.view = glm::lookAt(camera.position, camera.position + camera.front, camera.up);
-	matrices.mvp = matrices.projection * matrices.view * matrices.model;
 
 	// draw 16 x 16 grass blocks
 	shader.Bind();
-	shader.SetMat4(0, matrices.mvp);
+	shader.SetMat4(0, matrices.projection);
+	shader.SetMat4(1, matrices.view);
+	shader.SetMat4(2, matrices.model);
 	glBindVertexArray(blockVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
@@ -337,8 +345,7 @@ void Render()
 		{
 			matrices.model = glm::mat4(1.0f);
 			matrices.model = glm::translate(matrices.model, glm::vec3(i, 0.0f, j));
-			matrices.mvp = matrices.projection * matrices.view * matrices.model;
-			shader.SetMat4(0, matrices.mvp);
+			shader.SetMat4(2, matrices.model);
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		}
 	}
@@ -347,9 +354,8 @@ void Render()
 	// draw skybox
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader.Bind();
-	glm::mat4 view = glm::mat4(glm::mat3(matrices.view));
-	glm::mat4 mvp = matrices.projection * view;
-	skyboxShader.SetMat4(0, mvp);
+	skyboxShader.SetMat4(0, matrices.projection);
+	skyboxShader.SetMat4(1, glm::mat4(glm::mat3(matrices.view)));
 	glBindVertexArray(skyboxVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureSkybox);
