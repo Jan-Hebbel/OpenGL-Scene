@@ -319,7 +319,7 @@ void Init()
 	shader.SetFloat("material.shininess", 1);
 	// light
 	shader.SetVec3("light.position", glm::vec3(8.0f, 2.0f, 8.0f));
-	shader.SetVec3("light.color", glm::vec3(1.0f, 0.8f, 0.8f));
+	shader.SetVec3("light.color", glm::vec3(1.0f, 1.0f, 0.8f));
 	shader.SetVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
 	shader.SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	shader.SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
