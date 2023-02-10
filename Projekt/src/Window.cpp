@@ -95,35 +95,36 @@ void Init()
 	shader.LinkShader();
 
 	float block[] = {
-	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 0.0f, -1.0f,  0.0f,	// bottom
-		0.5f, -0.5f, -0.5f,		0.1875f, 0.0f,		 0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,		0.1875f, 0.0625f,	 0.0f, -1.0f,  0.0f,
-	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0625f,	 0.0f, -1.0f,  0.0f,
-
-	   -0.5f,  0.5f,  0.5f,		0.0f,    0.0f,	 	 0.0f,  1.0f,  0.0f,	// top
-		0.5f,  0.5f,  0.5f,		0.0625f, 0.0f,		 0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	 0.0f,  1.0f,  0.0f,
-	   -0.5f,  0.5f, -0.5f,		0.0f,	 0.0625f,	 0.0f,  1.0f,  0.0f,
-
-	   -0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		 0.0f,  0.0f,  1.0f,	// front
-		0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		 0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,	 0.0f,  0.0f,  1.0f,
-	   -0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,	 0.0f,  0.0f,  1.0f,
-
-	   -0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		-1.0f,  0.0f,  0.0f,	// left
-	   -0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		-1.0f,  0.0f,  0.0f,
-	   -0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,	-1.0f,  0.0f,  0.0f,
-	   -0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	-1.0f,  0.0f,  0.0f,
-
-		0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		 1.0f,  0.0f,  0.0f,	// right
-		0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,	 1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,	 1.0f,  0.0f,  0.0f,
-
-		0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		 0.0f,  0.0f, -1.0f,	// back
-	   -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 0.0f,  0.0f, -1.0f,
-	   -0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,	 0.0f,  0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	 0.0f,  0.0f, -1.0f,
+		// bottom
+	    -0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 0.0f, -1.0f,  0.0f,	0.9375f, 0.0f,
+	 	 0.5f, -0.5f, -0.5f,		0.1875f, 0.0f,		 0.0f, -1.0f,  0.0f,	1.0f,    0.0f,
+		 0.5f, -0.5f,  0.5f,		0.1875f, 0.0625f,	 0.0f, -1.0f,  0.0f,    1.0f,    0.0625f,
+	    -0.5f, -0.5f,  0.5f,		0.125f,  0.0625f,	 0.0f, -1.0f,  0.0f,    0.9375f, 0.0625f,
+		// top
+	    -0.5f,  0.5f,  0.5f,		0.0f,    0.0f,	 	 0.0f,  1.0f,  0.0f,	0.9375f, 0.0f,
+		 0.5f,  0.5f,  0.5f,		0.0625f, 0.0f,		 0.0f,  1.0f,  0.0f,	1.0f,    0.0f,
+		 0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	 0.0f,  1.0f,  0.0f,	1.0f,    0.0625f,
+		-0.5f,  0.5f, -0.5f,		0.0f,	 0.0625f,	 0.0f,  1.0f,  0.0f,	0.9375f, 0.0625f,
+		// front
+	    -0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		 0.0f,  0.0f,  1.0f,	0.9375f, 0.0f,
+		 0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		 0.0f,  0.0f,  1.0f,	1.0f,    0.0f,
+		 0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,	 0.0f,  0.0f,  1.0f,	1.0f,    0.0625f,
+		-0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,	 0.0f,  0.0f,  1.0f,	0.9375f, 0.0625f,
+		// left
+	    -0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		-1.0f,  0.0f,  0.0f,	0.9375f, 0.0f,
+		-0.5f, -0.5f,  0.5f,		0.125f,  0.0f,		-1.0f,  0.0f,  0.0f,	1.0f,    0.0f,
+		-0.5f,  0.5f,  0.5f,		0.125f,  0.0625f,	-1.0f,  0.0f,  0.0f,	1.0f,    0.0625f,
+		-0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	-1.0f,  0.0f,  0.0f,	0.9375f, 0.0625f,
+		// right
+		 0.5f, -0.5f,  0.5f,		0.0625f, 0.0f,		 1.0f,  0.0f,  0.0f,	0.9375f, 0.0f,
+		 0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 1.0f,  0.0f,  0.0f,	1.0f,    0.0f,
+		 0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,	 1.0f,  0.0f,  0.0f,	1.0f,    0.0625f,
+		 0.5f,  0.5f,  0.5f,		0.0625f, 0.0625f,	 1.0f,  0.0f,  0.0f,	0.9375f, 0.0625f,
+		 // back
+		 0.5f, -0.5f, -0.5f,		0.0625f, 0.0f,		 0.0f,  0.0f, -1.0f,	0.9375f, 0.0f,
+		-0.5f, -0.5f, -0.5f,		0.125f,  0.0f,		 0.0f,  0.0f, -1.0f,	1.0f,    0.0f,
+		-0.5f,  0.5f, -0.5f,		0.125f,  0.0625f,	 0.0f,  0.0f, -1.0f,	1.0f,    0.0625f,
+		 0.5f,  0.5f, -0.5f,		0.0625f, 0.0625f,	 0.0f,  0.0f, -1.0f,	0.9375f, 0.0625f,
 	};
 
 	unsigned int blockIndices[] = {
@@ -155,11 +156,14 @@ void Init()
 		GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 8, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(float) * 10, (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 8, (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, sizeof(float) * 10, (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, false, sizeof(float) * 8, (void*)(5 * sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, false, sizeof(float) * 10, (void*)(5 * sizeof(float)));
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 2, GL_FLOAT, false, sizeof(float) * 10, (void*)(8 * sizeof(float)));
+
 	glGenTextures(1, &textureBlock);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
@@ -303,17 +307,19 @@ void Init()
 		glm::perspective(glm::pi<float>() * 0.25f, window.aspectRatio, 0.1f, 100.0f);
 
 	shader.Bind();
+	// vertex shader
 	shader.SetMat4("projection", matrices.projection);
 	shader.SetMat4("view", matrices.view);
 	shader.SetMat4("model", matrices.model);
-	shader.SetInt("textureAtlas", 0);
 
-	glm::vec3 lightPos = glm::vec3(8.0f, 2.0f, 8.0f);
-	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	shader.SetVec3("lightColor", lightColor);
+	// fragment shader
 	shader.SetVec3("viewPos", camera.position);
-	shader.SetVec3("light.position", lightPos);
+	// material
+	shader.SetInt("material.textureAtlas", 0);
+	shader.SetFloat("material.shininess", 1);
+	// light
+	shader.SetVec3("light.position", glm::vec3(8.0f, 2.0f, 8.0f));
+	shader.SetVec3("light.color", glm::vec3(1.0f, 0.8f, 0.8f));
 	shader.SetVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
 	shader.SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 	shader.SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
