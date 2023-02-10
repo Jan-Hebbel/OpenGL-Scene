@@ -3,8 +3,8 @@ layout(location = 0) in vec3 aPos;
 
 out vec3 texCoords;
 
-layout(location = 0) uniform mat4 projection;
-layout(location = 1) uniform mat4 view;
+uniform mat4 projection;
+uniform mat4 view;
 
 void main()
 {

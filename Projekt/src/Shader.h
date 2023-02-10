@@ -28,9 +28,9 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	void SetInt(unsigned int id, int value) const;
-	void SetMat4(unsigned int id, const glm::mat4 &matrix) const;
-	void SetVec3(unsigned int id, const glm::vec3 &vector) const;
+	void SetInt(const std::string& name, int value) const;
+	void SetMat4(const std::string& name, const glm::mat4 &matrix) const;
+	void SetVec3(const std::string &name, const glm::vec3 &vector) const;
 private:
 	std::string GetShaderSource(const std::string&) const;
 	unsigned int GetIndex(int type) const;

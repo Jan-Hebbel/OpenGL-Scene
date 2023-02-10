@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Debug.h"
 
 #include <glad/glad.h>
 
@@ -70,19 +71,19 @@ void Shader::Unbind() const
 	glUseProgram(0);
 }
 
-void Shader::SetInt(unsigned int id, int value) const
+void Shader::SetInt(const std::string& name, int value) const
 {
-	glUniform1i(id, value);
+	glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), value);
 }
 
-void Shader::SetMat4(unsigned int id, const glm::mat4 &matrix) const
+void Shader::SetMat4(const std::string& name, const glm::mat4 &matrix) const
 {
-	glUniformMatrix4fv(id, 1, false, &matrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, false, &matrix[0][0]);
 }
 
-void Shader::SetVec3(unsigned int id, const glm::vec3 &vector) const
+void Shader::SetVec3(const std::string &name, const glm::vec3 &vector) const
 {
-	glUniform3fv(id, 1, &vector[0]);
+	glUniform3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, &vector[0]);
 }
 
 std::string Shader::GetShaderSource(const std::string& filepath) const
@@ -159,4 +160,6 @@ std::string Shader::GetTypeAsString(int type) const
 	case GL_COMPUTE_SHADER:
 		return "Compute";
 	}
+	ASSERT(0);
+	return "Unreachable";
 }

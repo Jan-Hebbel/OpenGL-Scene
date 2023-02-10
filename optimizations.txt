@@ -1,0 +1,12 @@
+inverse in shader is bold
+
+yes
+layout(location = 6) uniform vec3 viewPos; is also not required as you already have that information stored inside your layout(location = 1) uniform mat4 view;
+
+yeah just extract the view pos from the matrix
+view[3].xyz
+
+This matrix uniform mat4 view; is inverted.
+it's the inverse of the camera transform
+you could pass the actual camera transform instead
+and precompute the VP matrix, which is what I'd do

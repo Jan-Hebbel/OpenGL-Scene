@@ -60,8 +60,8 @@ void mouseCallback(GLFWwindow* pwindow, double xpos, double ypos)
 	front.y = sin(glm::radians(camera.pitch));
 	front.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
 	camera.front = glm::normalize(front);
-
-	//TODO: update up and right with the cross function; see learnopengl.com
+	camera.right = glm::normalize(glm::cross(camera.front, camera.worldUp));
+	camera.up = glm::normalize(glm::cross(camera.right, camera.front));
 }
 
 void printFPSandFrameTime(double deltaTime)
@@ -303,20 +303,25 @@ void Init()
 		glm::perspective(glm::pi<float>() * 0.25f, window.aspectRatio, 0.1f, 100.0f);
 
 	shader.Bind();
-	shader.SetMat4(0, matrices.projection);
-	shader.SetMat4(1, matrices.view);
-	shader.SetMat4(2, matrices.model);
-	shader.SetInt(3, 0);
+	shader.SetMat4("projection", matrices.projection);
+	shader.SetMat4("view", matrices.view);
+	shader.SetMat4("model", matrices.model);
+	shader.SetInt("textureAtlas", 0);
 
-	glm::vec3 lightPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 lightPos = glm::vec3(8.0f, 2.0f, 8.0f);
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	shader.SetVec3(4, lightPos);
-	shader.SetVec3(5, glm::vec3(1.0f, 1.0f, 1.0f));
+	shader.SetVec3("lightColor", lightColor);
+	shader.SetVec3("viewPos", camera.position);
+	shader.SetVec3("light.position", lightPos);
+	shader.SetVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	shader.SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	shader.SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	skyboxShader.Bind();
-	skyboxShader.SetMat4(0, matrices.projection);
-	skyboxShader.SetMat4(1, glm::mat4(glm::mat3(matrices.view)));
-	skyboxShader.SetInt(2, 0);
+	skyboxShader.SetMat4("projection", matrices.projection);
+	skyboxShader.SetMat4("view", glm::mat4(glm::mat3(matrices.view)));
+	skyboxShader.SetInt("skybox", 0);
 }
 
 void Update()
@@ -333,9 +338,10 @@ void Render()
 
 	// draw 16 x 16 grass blocks
 	shader.Bind();
-	shader.SetMat4(0, matrices.projection);
-	shader.SetMat4(1, matrices.view);
-	shader.SetMat4(2, matrices.model);
+	shader.SetMat4("projection", matrices.projection);
+	shader.SetMat4("view", matrices.view);
+	shader.SetMat4("model", matrices.model);
+	shader.SetVec3("viewPos", camera.position);
 	glBindVertexArray(blockVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
@@ -343,19 +349,26 @@ void Render()
 	{
 		for (float j = 0.0f; j < 16.0f; ++j)
 		{
+			/*if (i > 0 || j > 0) continue;*/
 			matrices.model = glm::mat4(1.0f);
 			matrices.model = glm::translate(matrices.model, glm::vec3(i, 0.0f, j));
-			shader.SetMat4(2, matrices.model);
+			shader.SetMat4("model", matrices.model);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 	}
+	matrices.model = glm::mat4(1.0f);
+	matrices.model = glm::translate(matrices.model, glm::vec3(4.0f, 1.0f, 4.0f));
+	shader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
 	// draw skybox
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader.Bind();
-	skyboxShader.SetMat4(0, matrices.projection);
-	skyboxShader.SetMat4(1, glm::mat4(glm::mat3(matrices.view)));
+	skyboxShader.SetMat4("projection", matrices.projection);
+	skyboxShader.SetMat4("view", glm::mat4(glm::mat3(matrices.view)));
 	glBindVertexArray(skyboxVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureSkybox);
