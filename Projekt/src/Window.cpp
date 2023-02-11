@@ -318,11 +318,25 @@ void Init()
 	shader.SetInt("material.textureAtlas", 0);
 	shader.SetFloat("material.shininess", 1);
 	// light
-	shader.SetVec3("light.position", glm::vec3(8.0f, 2.0f, 8.0f));
-	shader.SetVec3("light.color", glm::vec3(1.0f, 1.0f, 0.8f));
-	shader.SetVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-	shader.SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-	shader.SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 0.8f);
+	glm::vec3 ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+	glm::vec3 diffuse = glm::vec3(0.7f, 0.7f, 0.7f);
+	glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
+		// directional light
+	shader.SetVec3("dirLight.light.color", lightColor);
+	shader.SetVec3("dirLight.light.ambient", ambient);
+	shader.SetVec3("dirLight.light.diffuse", diffuse);
+	shader.SetVec3("dirLight.light.specular", specular);
+	shader.SetVec3("dirLight.direction", glm::vec3(1.0f, -2.0f, 1.0f));
+		// point light
+	shader.SetVec3("pointLight.light.color", lightColor);
+	shader.SetVec3("pointLight.light.ambient", ambient);
+	shader.SetVec3("pointLight.light.diffuse", diffuse);
+	shader.SetVec3("pointLight.light.specular", specular);
+	shader.SetVec3("pointLight.position", glm::vec3(14.0f, 1.0f, 14.0f));
+	shader.SetFloat("pointLight.constant", 1.0f);
+	shader.SetFloat("pointLight.linear", 0.045f);
+	shader.SetFloat("pointLight.quadratic", 0.0075f);
 
 	skyboxShader.Bind();
 	skyboxShader.SetMat4("projection", matrices.projection);
