@@ -21,6 +21,11 @@ unsigned int skyboxVA;
 unsigned int textureBlock;
 unsigned int textureSkybox;
 
+unsigned int depthMapFB;
+unsigned int depthMap;
+const unsigned int SHADOW_WIDTH = 1024;
+const unsigned int SHADOW_HEIGHT = 1024;
+
 void keyCallback(GLFWwindow* pwindow, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -342,6 +347,24 @@ void Init()
 	skyboxShader.SetMat4("projection", matrices.projection);
 	skyboxShader.SetMat4("view", glm::mat4(glm::mat3(matrices.view)));
 	skyboxShader.SetInt("skybox", 0);
+
+	// framebuffer and depth map shenanigans
+	glGenFramebuffers(1, &depthMapFB);
+
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0,
+		GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	//glReadBuffer(GL_NONE); // GL_NONE is not a valid enum going by the documentation
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Update()
@@ -351,6 +374,17 @@ void Update()
 
 void Render()
 {
+	// first pass: rendering to depth map for shadows
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	// TODO: configure shader and matrices
+	//	     render scene
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// normal rendering
+	glViewport(0, 0, window.width, window.height);
+
 	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
