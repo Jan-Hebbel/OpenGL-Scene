@@ -586,6 +586,8 @@
     <None Include="Projekt\vendor\glm\gtx\wrap.inl" />
     <None Include="res\shader\Basic.frag" />
     <None Include="res\shader\Basic.vert" />
+    <None Include="res\shader\DepthShader.frag" />
+    <None Include="res\shader\DepthShader.vert" />
     <None Include="res\shader\Skybox.frag" />
     <None Include="res\shader\Skybox.vert" />
   </ItemGroup>

@@ -9,6 +9,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
 
 Window window;
@@ -25,6 +26,7 @@ unsigned int depthMapFB;
 unsigned int depthMap;
 const unsigned int SHADOW_WIDTH = 1024;
 const unsigned int SHADOW_HEIGHT = 1024;
+Shader depthShader;
 
 void keyCallback(GLFWwindow* pwindow, int key, int scancode, int action, int mods)
 {
@@ -357,14 +359,28 @@ void Init()
 		GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glm::vec4 clampColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(clampColor));
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	//glReadBuffer(GL_NONE); // GL_NONE is not a valid enum going by the documentation
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "ERROR: Framebuffer is incomplete" << '\n';
+		exit(-1);
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	depthShader.Create();
+	depthShader.AddShader("res/shader/DepthShader.vert", GL_VERTEX_SHADER);
+	depthShader.AddShader("res/shader/DepthShader.frag", GL_FRAGMENT_SHADER);
+	depthShader.LinkShader();
 }
 
 void Update()
@@ -374,13 +390,34 @@ void Update()
 
 void Render()
 {
+	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	// first pass: rendering to depth map for shadows
+	//		configure shader and matrices
+	// reduce ortho left, right, bottom, top and camera position as much as possible 
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
+	glm::mat4 lightView = glm::lookAt(
+		glm::vec3(-2.0f, 4.0f, -2.0f) * 10.0f,
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 lightModel = glm::mat4(1.0f);
+	glm::mat4 lightVP = lightProjection * lightView;
+	depthShader.Bind();
+	depthShader.SetMat4("lightVP", lightVP);
+	depthShader.SetMat4("model", lightModel);
+
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	// TODO: configure shader and matrices
-	//	     render scene
+
+	//		render scene
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureBlock);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 
 	// normal rendering
 	glViewport(0, 0, window.width, window.height);
@@ -403,7 +440,6 @@ void Render()
 	{
 		for (float j = 0.0f; j < 16.0f; ++j)
 		{
-			/*if (i > 0 || j > 0) continue;*/
 			matrices.model = glm::mat4(1.0f);
 			matrices.model = glm::translate(matrices.model, glm::vec3(i, 0.0f, j));
 			shader.SetMat4("model", matrices.model);
