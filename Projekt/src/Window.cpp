@@ -340,7 +340,7 @@ void Init()
 	shader.SetVec3("pointLight.light.ambient", ambient);
 	shader.SetVec3("pointLight.light.diffuse", diffuse);
 	shader.SetVec3("pointLight.light.specular", specular);
-	shader.SetVec3("pointLight.position", glm::vec3(14.0f, 1.0f, 14.0f));
+	shader.SetVec3("pointLight.position", glm::vec3(2.0f, 1.0f, 2.0f));
 	shader.SetFloat("pointLight.constant", 1.0f);
 	shader.SetFloat("pointLight.linear", 0.045f);
 	shader.SetFloat("pointLight.quadratic", 0.0075f);
@@ -396,24 +396,41 @@ void Render()
 	// first pass: rendering to depth map for shadows
 	//		configure shader and matrices
 	// reduce ortho left, right, bottom, top and camera position as much as possible 
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
+	glm::mat4 lightProjection = glm::ortho(-12.0f, 12.0f, -12.0f, 12.0f, 0.1f, 20.0f);
 	glm::mat4 lightView = glm::lookAt(
-		glm::vec3(-2.0f, 4.0f, -2.0f) * 10.0f,
+		glm::vec3(-1.0f, 1.0f, -0.5f) * 6.0f,
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 lightModel = glm::mat4(1.0f);
 	glm::mat4 lightVP = lightProjection * lightView;
 	depthShader.Bind();
 	depthShader.SetMat4("lightVP", lightVP);
-	depthShader.SetMat4("model", lightModel);
+	depthShader.SetMat4("model", matrices.model);
 
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFB);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	//		render scene
+	glBindVertexArray(blockVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
+	for (float i = -8.0f; i < 8.0f; ++i)
+	{
+		for (float j = -8.0f; j < 8.0f; ++j)
+		{
+			matrices.model = glm::mat4(1.0f);
+			matrices.model = glm::translate(matrices.model, glm::vec3(i, 0.0f, j));
+			depthShader.SetMat4("model", matrices.model);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+	}
+	matrices.model = glm::mat4(1.0f);
+	matrices.model = glm::translate(matrices.model, glm::vec3(0.0f, 1.0f, 0.0f));
+	depthShader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -436,9 +453,9 @@ void Render()
 	glBindVertexArray(blockVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
-	for (float i = 0.0f; i < 16.0f; ++i)
+	for (float i = -8.0f; i < 8.0f; ++i)
 	{
-		for (float j = 0.0f; j < 16.0f; ++j)
+		for (float j = -8.0f; j < 8.0f; ++j)
 		{
 			matrices.model = glm::mat4(1.0f);
 			matrices.model = glm::translate(matrices.model, glm::vec3(i, 0.0f, j));
@@ -449,7 +466,7 @@ void Render()
 		}
 	}
 	matrices.model = glm::mat4(1.0f);
-	matrices.model = glm::translate(matrices.model, glm::vec3(4.0f, 1.0f, 4.0f));
+	matrices.model = glm::translate(matrices.model, glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.SetMat4("model", matrices.model);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
