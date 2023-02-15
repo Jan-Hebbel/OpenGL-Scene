@@ -341,7 +341,7 @@ void Init()
 	shader.SetVec3("pointLight.light.ambient", ambient);
 	shader.SetVec3("pointLight.light.diffuse", diffuse);
 	shader.SetVec3("pointLight.light.specular", specular);
-	shader.SetVec3("pointLight.position", glm::vec3(2.0f, 1.0f, 2.0f));
+	shader.SetVec3("pointLight.position", glm::vec3(1.0f, 1.0f, 7.0f));
 	shader.SetFloat("pointLight.constant", 1.0f);
 	shader.SetFloat("pointLight.linear", 0.045f);
 	shader.SetFloat("pointLight.quadratic", 0.0075f);
@@ -434,6 +434,18 @@ void Render()
 	matrices.model = glm::translate(matrices.model, glm::vec3(0.0f, 1.0f, 0.0f));
 	depthShader.SetMat4("model", matrices.model);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	matrices.model = glm::mat4(1.0f);
+	matrices.model = glm::translate(matrices.model, glm::vec3(0.0f, 1.0f, 8.0f));
+	depthShader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	matrices.model = glm::translate(matrices.model, glm::vec3(1.0f, 0.0f, 0.0f));
+	depthShader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	matrices.model = glm::translate(matrices.model, glm::vec3(1.0f, 0.0f, 0.0f));
+	depthShader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
 	glBindVertexArray(0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -479,6 +491,18 @@ void Render()
 	matrices.model = glm::translate(matrices.model, glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.SetMat4("model", matrices.model);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	matrices.model = glm::mat4(1.0f);
+	matrices.model = glm::translate(matrices.model, glm::vec3(0.0f, 1.0f, 8.0f));
+	shader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	matrices.model = glm::translate(matrices.model, glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	matrices.model = glm::translate(matrices.model, glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.SetMat4("model", matrices.model);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
 	glBindVertexArray(0);
 
 	// draw skybox
