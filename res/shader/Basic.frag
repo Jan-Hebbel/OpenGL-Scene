@@ -8,6 +8,7 @@ in vec2 texCoord;
 in vec2 specMapCoord;
 in vec3 normal;
 in vec3 fragPos;
+in vec4 lightFragPos;
 
 struct Material {
     sampler2D textureAtlas;
@@ -39,9 +40,45 @@ struct PointLight {
 };
 
 uniform vec3 viewPos;
+uniform sampler2D depthMap;
 uniform Material material;
 uniform DirLight dirLight;
 uniform PointLight pointLight;
+
+float CalcShadow(vec4 lightFragPos, vec3 lightDir)
+{
+    // not necessary for orthographic projection
+    vec3 lightNDC = lightFragPos.xyz / lightFragPos.w;
+    lightNDC = lightNDC * 0.5 + 0.5;
+
+    float closestDepth = texture(depthMap, lightNDC.xy).r;
+    float currentDepth = lightNDC.z;
+
+    // bias could be calculated dependent on angle of light like this:
+    // float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
+    float bias = 0.0024;
+    // if currentDepth is farther away, it is in shadow
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    // PCF (percentage-closer filtering)
+//    float shadow = 0.0;
+//    vec2 texelSize = 1.0 / textureSize(depthMap, 0);
+//    for (int x = -1; x <= 1; ++x)
+//    {
+//        for (int y = -1; y <= 1; ++y)
+//        {
+//            float pcfDepth = texture(depthMap, lightNDC.xy + vec2(x, y) * texelSize).r;
+//            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+//        }
+//    }
+//    shadow /= 9.0;
+
+    // apply no shadow to areas outside of the far plane of the orthopraphic view frustum
+    if (lightNDC.z > 1.0)
+        shadow = 0.0;
+
+    return shadow;
+}
 
 vec3 CalcLight(Light light, vec3 normal, vec3 viewDir, vec3 lightDir) 
 {
@@ -62,7 +99,10 @@ vec3 CalcLight(Light light, vec3 normal, vec3 viewDir, vec3 lightDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = light.specular * spec * specMap;
         
-    return (ambient + diffuse + specular) * light.color;
+    // shadow
+    float shadow = CalcShadow(lightFragPos, lightDir);
+
+    return (ambient + (1.0 - shadow) * (diffuse + specular)) * light.color;
 }
 
 vec3 CalcDirLight(DirLight dirLight, vec3 normal, vec3 viewDir)

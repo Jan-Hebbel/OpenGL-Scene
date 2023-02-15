@@ -321,6 +321,7 @@ void Init()
 
 	// fragment shader
 	shader.SetVec3("viewPos", camera.position);
+	shader.SetInt("depthMap", 1);
 	// material
 	shader.SetInt("material.textureAtlas", 0);
 	shader.SetFloat("material.shininess", 1);
@@ -393,6 +394,9 @@ void Render()
 	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//glCullFace(GL_FRONT);
+	glDisable(GL_CULL_FACE);
+
 	// first pass: rendering to depth map for shadows
 	//		configure shader and matrices
 	// reduce ortho left, right, bottom, top and camera position as much as possible 
@@ -434,6 +438,9 @@ void Render()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	//glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
 
 
 	// normal rendering
@@ -449,10 +456,13 @@ void Render()
 	shader.SetMat4("projection", matrices.projection);
 	shader.SetMat4("view", matrices.view);
 	shader.SetMat4("model", matrices.model);
+	shader.SetMat4("lightVP", lightVP);
 	shader.SetVec3("viewPos", camera.position);
 	glBindVertexArray(blockVA);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureBlock);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
 	for (float i = -8.0f; i < 8.0f; ++i)
 	{
 		for (float j = -8.0f; j < 8.0f; ++j)
