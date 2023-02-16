@@ -604,7 +604,9 @@ void Window::Loop()
 		window.deltaTime = currentFrame - window.lastFrame;
 		window.lastFrame = currentFrame;
 
+#ifdef _DEBUG
 		printFPSandFrameTime(window.deltaTime);
+#endif
 
 		Update();
 		Render();
