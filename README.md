@@ -1,4 +1,4 @@
-# Projekt
+# A Minecraft like scene made in OpenGL
 A project made for the HU Berlin computer graphics module.
 
 ## Screenshots
