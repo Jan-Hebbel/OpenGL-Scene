@@ -1,6 +1,12 @@
 # A Minecraft like scene made in OpenGL
 A project made for the HU Berlin computer graphics module.
 
+Features include:
+- texture loading and mapping using a texture atlas
+- Blinn-Phong Shading 
+- 3 different type of lights: directional, point, spot light (only directional and point light presented)
+- shadow mapping (two render passes: first rendering to depth texture, then to framebuffer) 
+
 ## Screenshots
 ![Screenshot_20230216_105751](https://user-images.githubusercontent.com/75396907/220552473-5e813ca5-e0fb-4f2e-af38-108d59cb2a79.png)
 ![Screenshot_20230216_105851](https://user-images.githubusercontent.com/75396907/220552495-307f0bd4-3403-4edf-b829-1a5b17389b5e.png)
